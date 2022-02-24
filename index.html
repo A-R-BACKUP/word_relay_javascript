@@ -11,7 +11,8 @@
             user-select: none;
         }
         #wordlist{
-            border: 2px solid black;
+            background-color: #ffffff;
+            border: 1px solid gray;
             width: 250px;
             height: 100px;
         }
@@ -20,19 +21,24 @@
 
 <body>
 <div><span id="order">1</span>번째 참가자</div>
+<div>10초의 제한시간이 있습니다.</div>
 <div id="timer"></div>
 <div>제시어: <span id="word"></span></div>
-<input type="text">
-<button>입력</button>
+<input type="text" onkeyup="enter_press()">
+<button id = wd_ent>입력</button>
+<button id = "replay">다시 시작</button>
 <br>
 <br>
 <div>누적 단어</div>
 <div id="wordlist"></div>
+<br>
+<br>
 <script>
     const number = Number(prompt('몇 명이 참가하나요?'));
 
     if (number) {
-        const $button = document.querySelector('button');
+        const $wd_ent = document.querySelector('#wd_ent');
+        const $replay = document.querySelector('#replay')
         const $input = document.querySelector('input');
         const $word = document.querySelector('#word');
         const $order = document.querySelector('#order');
@@ -41,20 +47,26 @@
         let newWord; // 새로 입력한 단어
         let wordlist = [];
         let sec = 10;
+        let chk = 0;
 
         let x = setInterval(function() {
             console.log(sec);
             document.getElementById("timer").innerHTML = sec + "초 안에 입력하십시오.";
             sec--;
+            if(chk === 1){
+                sec = 10;
+                return chk = 0;
+            }
             if (sec < 0) {
+                alert('제한시간이 지났습니다. 다시 시작합니다.')
                 window.location.reload();
             }
         }, 1000);
 
         const onClickButton = () => {
-            if (newWord.length === 3 && (!word || word[word.length - 1] === newWord[0])) { // 제시어가 비어 있는가?
-                // 비어 있다.
-                word = newWord; // 입력한 단어가 제시어가 된다.
+            chk = 1;
+            if ((newWord.length === 2 ||newWord.length === 3 || newWord.length === 4 || newWord.length === 5) && (!word || word[word.length - 1] === newWord[0]) && wordlist.includes(newWord, 0) === false) {
+                word = newWord;
                 $word.textContent = word;
                 wordlist.push(newWord);
                 $wordlist.textContent = wordlist;
@@ -65,17 +77,28 @@
                     $order.textContent = order + 1;
                 }
             } else { // 올바르지 않은가
-                alert('올바르지 않은 단어입니다!');
+                alert('중복 되거나 올바르지 않은 단어입니다!');
             }
             $input.value = '';
             $input.focus();
         };
+
         const onInput = (event) => {
             newWord = event.target.value;
         };
 
-        $button.addEventListener('click', onClickButton);
-        $button.addEventListener('enter', onClickButton);
+        const replay = () => {
+            window.location.reload();
+        }
+
+        function enter_press() {
+            if (window.event.keyCode == 13) {
+                onClickButton();
+            }
+        }
+
+        $wd_ent.addEventListener('click', onClickButton);
+        $replay.addEventListener('click', replay)
         $input.addEventListener('input', onInput);
     }
 </script>
