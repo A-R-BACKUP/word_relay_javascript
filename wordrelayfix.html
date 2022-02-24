@@ -21,10 +21,12 @@
 
 <body>
 <div><span id="order">1</span>번째 참가자</div>
+<div>10초의 제한시간이 있습니다.</div>
 <div id="timer"></div>
 <div>제시어: <span id="word"></span></div>
-<input type="text">
-<button>입력</button>
+<input type="text" onkeyup="enter_press()">
+<button id = wd_ent>입력</button>
+<button id = "replay">다시 시작</button>
 <br>
 <br>
 <div>누적 단어</div>
@@ -35,7 +37,8 @@
     const number = Number(prompt('몇 명이 참가하나요?'));
 
     if (number) {
-        const $button = document.querySelector('button');
+        const $wd_ent = document.querySelector('#wd_ent');
+        const $replay = document.querySelector('#replay')
         const $input = document.querySelector('input');
         const $word = document.querySelector('#word');
         const $order = document.querySelector('#order');
@@ -62,9 +65,8 @@
 
         const onClickButton = () => {
             chk = 1;
-            if (newWord.length === 3 && (!word || word[word.length - 1] === newWord[0]) && wordlist.includes(newWord, 0) === false) { // 제시어가 비어 있는가?
-                // 비어 있다.
-                word = newWord; // 입력한 단어가 제시어가 된다.
+            if ((newWord.length === 2 ||newWord.length === 3 || newWord.length === 4 || newWord.length === 5) && (!word || word[word.length - 1] === newWord[0]) && wordlist.includes(newWord, 0) === false) {
+                word = newWord;
                 $word.textContent = word;
                 wordlist.push(newWord);
                 $wordlist.textContent = wordlist;
@@ -85,7 +87,18 @@
             newWord = event.target.value;
         };
 
-            $button.addEventListener('click', onClickButton);
+        const replay = () => {
+            window.location.reload();
+        }
+
+        function enter_press() {
+            if (window.event.keyCode == 13) {
+                onClickButton();
+            }
+        }
+
+            $wd_ent.addEventListener('click', onClickButton);
+            $replay.addEventListener('click', replay)
             $input.addEventListener('input', onInput);
         }
 </script>
